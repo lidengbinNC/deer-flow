@@ -673,6 +673,7 @@ dependencies = [
     { name = "deerflow-harness" },
     { name = "fastapi" },
     { name = "httpx" },
+    { name = "langgraph-cli", extra = ["inmem"] },
     { name = "langgraph-sdk" },
     { name = "lark-oapi" },
     { name = "markdown-to-mrkdwn" },
@@ -695,6 +696,7 @@ requires-dist = [
     { name = "deerflow-harness", editable = "packages/harness" },
     { name = "fastapi", specifier = ">=0.115.0" },
     { name = "httpx", specifier = ">=0.28.0" },
+    { name = "langgraph-cli", extras = ["inmem"], specifier = ">=0.4.14" },
     { name = "langgraph-sdk", specifier = ">=0.1.51" },
     { name = "lark-oapi", specifier = ">=1.4.0" },
     { name = "markdown-to-mrkdwn", specifier = ">=0.3.1" },
@@ -1766,6 +1768,13 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/a3/6a/c9e73635933b722e4fca31fbf49dbe23eb06efde459b3aabf5a2a6d192e5/langgraph_cli-0.4.14.tar.gz", hash = "sha256:ba6bc715651d85ba94d14d6c53db87b4bf478cf45d61a28af9c8dee629f3cf1f", size = 857457, upload-time = "2026-03-02T21:27:19.189Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e1/29/25fb20e2f2f5733edd52a5c7735a397a71763bdda05a74d1398221a49a41/langgraph_cli-0.4.14-py3-none-any.whl", hash = "sha256:42ad7e56b512a3c260b205f7623d2e2cc0b245463961810fcc44482200374b4b", size = 42116, upload-time = "2026-03-02T21:27:18.042Z" },
+]
+
+[package.optional-dependencies]
+inmem = [
+    { name = "langgraph-api" },
+    { name = "langgraph-runtime-inmem" },
+    { name = "python-dotenv" },
 ]
 
 [[package]]

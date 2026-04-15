@@ -56,7 +56,6 @@ def create_chat_model(name: str | None = None, thinking_enabled: bool = False, *
             "supports_thinking",
             "supports_reasoning_effort",
             "when_thinking_enabled",
-            "when_thinking_disabled",
             "thinking",
             "supports_vision",
         },
@@ -113,7 +112,15 @@ def create_chat_model(name: str | None = None, thinking_enabled: bool = False, *
         elif "reasoning_effort" not in model_settings_from_config:
             model_settings_from_config["reasoning_effort"] = "medium"
 
-    model_instance = model_class(**{**model_settings_from_config, **kwargs})
+    final_model_kwargs = dict(model_settings_from_config)
+    for key, value in kwargs.items():
+        # Keep config-derived defaults when the caller passes None, but let
+        # explicit runtime values override config and avoid duplicate kwargs.
+        if value is None and key in final_model_kwargs:
+            continue
+        final_model_kwargs[key] = value
+
+    model_instance = model_class(**final_model_kwargs)
 
     callbacks = build_tracing_callbacks()
     if callbacks:

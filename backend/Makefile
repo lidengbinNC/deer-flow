@@ -2,10 +2,10 @@ install:
 	uv sync
 
 dev:
-	uv run langgraph dev --no-browser --no-reload --n-jobs-per-worker 10
+	PYTHONPATH=. uv run python dev_launcher.py langgraph
 
 gateway:
-	PYTHONPATH=. uv run uvicorn app.gateway.app:app --host 0.0.0.0 --port 8001
+	PYTHONPATH=. uv run python dev_launcher.py gateway
 
 test:
 	PYTHONPATH=. uv run pytest tests/ -v

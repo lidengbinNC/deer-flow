@@ -8,6 +8,7 @@ dependencies = [
     "deerflow-harness",
     "fastapi>=0.115.0",
     "httpx>=0.28.0",
+    "langgraph-cli[inmem]>=0.4.14",
     "python-multipart>=0.0.20",
     "sse-starlette>=2.1.0",
     "uvicorn[standard]>=0.34.0",

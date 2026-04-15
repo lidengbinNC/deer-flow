@@ -429,6 +429,72 @@ def test_reasoning_effort_preserved_when_supported(monkeypatch):
     assert captured.get("reasoning_effort") == "minimal"
 
 
+def test_explicit_reasoning_effort_does_not_duplicate_kwargs(monkeypatch):
+    wte = {"extra_body": {"thinking": {"type": "enabled", "budget_tokens": 5000}}}
+    cfg = _make_app_config(
+        [
+            _make_model(
+                "effort-model",
+                supports_thinking=True,
+                supports_reasoning_effort=True,
+                when_thinking_enabled=wte,
+            )
+        ]
+    )
+    _patch_factory(monkeypatch, cfg)
+
+    captured: dict = {}
+
+    class CapturingModel(FakeChatModel):
+        def __init__(self, **kwargs):
+            captured.update(kwargs)
+            BaseChatModel.__init__(self, **kwargs)
+
+    monkeypatch.setattr(factory_module, "resolve_class", lambda path, base: CapturingModel)
+
+    factory_module.create_chat_model(
+        name="effort-model",
+        thinking_enabled=False,
+        reasoning_effort="minimal",
+    )
+
+    assert captured.get("reasoning_effort") == "minimal"
+    assert captured.get("extra_body") == {"thinking": {"type": "disabled"}}
+
+
+def test_none_reasoning_effort_keeps_disabled_default(monkeypatch):
+    wte = {"extra_body": {"thinking": {"type": "enabled", "budget_tokens": 5000}}}
+    cfg = _make_app_config(
+        [
+            _make_model(
+                "effort-model",
+                supports_thinking=True,
+                supports_reasoning_effort=True,
+                when_thinking_enabled=wte,
+            )
+        ]
+    )
+    _patch_factory(monkeypatch, cfg)
+
+    captured: dict = {}
+
+    class CapturingModel(FakeChatModel):
+        def __init__(self, **kwargs):
+            captured.update(kwargs)
+            BaseChatModel.__init__(self, **kwargs)
+
+    monkeypatch.setattr(factory_module, "resolve_class", lambda path, base: CapturingModel)
+
+    factory_module.create_chat_model(
+        name="effort-model",
+        thinking_enabled=False,
+        reasoning_effort=None,
+    )
+
+    assert captured.get("reasoning_effort") == "minimal"
+    assert captured.get("extra_body") == {"thinking": {"type": "disabled"}}
+
+
 # ---------------------------------------------------------------------------
 # thinking shortcut field
 # ---------------------------------------------------------------------------

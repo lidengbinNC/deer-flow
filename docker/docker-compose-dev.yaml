@@ -42,7 +42,7 @@ services:
       # which is unreachable from inside the container
       - K8S_API_SERVER=https://host.docker.internal:26443
     env_file:
-      - ../.env
+      - ../backend/.env
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -91,6 +91,8 @@ services:
         NPM_REGISTRY: ${NPM_REGISTRY:-}
     container_name: deer-flow-frontend
     command: sh -c "cd frontend && pnpm run dev > /app/logs/frontend.log 2>&1"
+    ports:
+      - "3000:3000"
     volumes:
       - ../frontend/src:/app/frontend/src
       - ../frontend/public:/app/frontend/public
@@ -160,7 +162,7 @@ services:
       - DEER_FLOW_HOST_SKILLS_PATH=${DEER_FLOW_ROOT}/skills
       - DEER_FLOW_SANDBOX_HOST=host.docker.internal
     env_file:
-      - ../.env
+      - ../backend/.env
     extra_hosts:
       # For Linux: map host.docker.internal to host gateway
       - "host.docker.internal:host-gateway"
@@ -215,7 +217,7 @@ services:
       - DEER_FLOW_HOST_SKILLS_PATH=${DEER_FLOW_ROOT}/skills
       - DEER_FLOW_SANDBOX_HOST=host.docker.internal
     env_file:
-      - ../.env
+      - ../backend/.env
     extra_hosts:
       # For Linux: map host.docker.internal to host gateway
       - "host.docker.internal:host-gateway"

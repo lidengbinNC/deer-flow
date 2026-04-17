@@ -14,6 +14,7 @@ import asyncio
 import inspect
 import os
 import sys
+from functools import wraps
 from pathlib import Path
 
 
@@ -150,6 +151,7 @@ class DevLauncher:
 
     @staticmethod
     def _run_langgraph_cli(argv: list[str]) -> int:
+        DevLauncher._patch_dotenv_encoding_for_windows()
         try:
             import langgraph_cli.cli as langgraph_cli_module
         except ModuleNotFoundError as exc:
@@ -167,6 +169,46 @@ class DevLauncher:
                 return exc.code
             return 1
         return 0
+
+    @staticmethod
+    def _patch_dotenv_encoding_for_windows() -> None:
+        """Force UTF-8 dotenv decoding for Windows-local LangGraph startup."""
+        if os.name != "nt":
+            return
+
+        try:
+            import dotenv.main as dotenv_main
+        except ModuleNotFoundError:
+            return
+
+        original_init = dotenv_main.DotEnv.__init__
+        if getattr(original_init, "__deerflow_windows_utf8_patch__", False):
+            return
+
+        @wraps(original_init)
+        def patched_init(
+            self,
+            dotenv_path,
+            stream=None,
+            verbose=False,
+            encoding=None,
+            interpolate=True,
+            override=True,
+        ):
+            if encoding is None:
+                encoding = "utf-8-sig"
+            return original_init(
+                self,
+                dotenv_path=dotenv_path,
+                stream=stream,
+                verbose=verbose,
+                encoding=encoding,
+                interpolate=interpolate,
+                override=override,
+            )
+
+        patched_init.__deerflow_windows_utf8_patch__ = True
+        dotenv_main.DotEnv.__init__ = patched_init
 
 
 def main() -> int:

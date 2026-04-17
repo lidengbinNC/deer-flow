@@ -21,10 +21,10 @@ __pycache__/
 venv/
 
 # Environment variables
-.env
+backend/.env
 
 # Configuration files
-config.yaml
+backend/config.yaml
 mcp_config.json
 extensions_config.json
 

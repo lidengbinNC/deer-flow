@@ -30,7 +30,7 @@
 
 ### 2. 配置文件
 
-#### [`config.yaml`](../../config.example.yaml)
+#### [`config.yaml`](../config.example.yaml)
 - ✅ 添加 title 配置段：
 ```yaml
 title:

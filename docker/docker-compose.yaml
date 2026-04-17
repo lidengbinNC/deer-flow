@@ -108,7 +108,7 @@ services:
       - DEER_FLOW_HOST_SKILLS_PATH=${DEER_FLOW_REPO_ROOT}/skills
       - DEER_FLOW_SANDBOX_HOST=host.docker.internal
     env_file:
-      - ../.env
+      - ../backend/.env
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -159,7 +159,7 @@ services:
       - DEER_FLOW_SANDBOX_HOST=host.docker.internal
       # LangSmith tracing: set LANGSMITH_TRACING=true and LANGSMITH_API_KEY in .env to enable.
     env_file:
-      - ../.env
+      - ../backend/.env
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -186,7 +186,7 @@ services:
       - NODE_HOST=host.docker.internal
       - K8S_API_SERVER=https://host.docker.internal:26443
     env_file:
-      - ../.env
+      - ../backend/.env
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:

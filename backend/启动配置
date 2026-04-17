@@ -1,0 +1,30 @@
+启动步骤：
+docker启动frontend和nginx，本地启动Langgraph和gateway
+
+步骤：
+1.Docker 启 frontend nginx
+docker compose -p deer-flow-dev -f docker-compose-dev.yaml up --build -d --no-deps frontend nginx
+2.启动gateway-local
+3.启动Langgraph-local
+4.打开 http://localhost:2026
+
+ $env:HOME = $env:USERPROFILE
+ $env:GATEWAY_UPSTREAM = "host.docker.internal:8001"
+ $env:LANGGRAPH_UPSTREAM = "host.docker.internal:8001"
+ $env:LANGGRAPH_REWRITE = "/api/"
+
+docker compose 启动：
+docker compose -p deer-flow-dev -f docker-compose-dev.yaml up --build -d --no-deps frontend nginx
+
+docker compose 结束：
+docker compose -p deer-flow-dev -f docker-compose-dev.yaml down
+
+验证nginx配置：
+docker exec deer-flow-nginx sh -lc 'echo GATEWAY_UPSTREAM=$GATEWAY_UPSTREAM; echo LANGGRAPH_UPSTREAM=$LANGGRAPH_UPSTREAM; echo LANGGRAPH_REWRITE=$LANGGRAPH_REWRITE'
+
+启动步骤:
+Docker 启 frontend
+PyCharm 启 gateway
+PyCharm 启 langgraph
+命令行启 nginx
+打开 http://localhost:2026

@@ -13,7 +13,7 @@ from .base import END_SENTINEL, HEARTBEAT_SENTINEL, StreamBridge, StreamEvent
 
 logger = logging.getLogger(__name__)
 
-
+# todo 后面有时间要看下，这里的关于memory实现异步生产 - 消费的队列，是如何做的？
 @dataclass
 class _RunStream:
     events: list[StreamEvent] = field(default_factory=list)

@@ -28,6 +28,7 @@ async def langgraph_runtime(app: FastAPI) -> AsyncGenerator[None, None]:
     from deerflow.agents.checkpointer.async_provider import make_checkpointer
     from deerflow.runtime import make_store, make_stream_bridge
 
+#这里有个进栈的处理，按照先进后出的顺序，在退出的时候，按照run_manager>store>checkpointer>stream_bridge方式出栈
     async with AsyncExitStack() as stack:
         app.state.stream_bridge = await stack.enter_async_context(make_stream_bridge())
         app.state.checkpointer = await stack.enter_async_context(make_checkpointer())

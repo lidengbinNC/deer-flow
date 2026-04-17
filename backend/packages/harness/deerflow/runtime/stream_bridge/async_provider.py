@@ -46,6 +46,7 @@ async def make_stream_bridge(config=None) -> AsyncIterator[StreamBridge]:
             await bridge.close()
         return
 
+# todo:未来考虑用一种更合适的方案，来实现这个stream的桥接，可以考虑用redis，要先评估下，redis或者mq？？
     if config.type == "redis":
         raise NotImplementedError("Redis stream bridge planned for Phase 2")
 

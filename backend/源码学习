@@ -1,0 +1,56 @@
+1.RunManager的生命周期
+┌─────────────────────────────────────────────────────────────┐
+│                    RunManager 生命周期                       │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  1. 应用启动                                                  │
+│     ↓                                                        │
+│     deps.py:36 → RunManager() → app.state.run_manager        │
+│     （初始化 _runs={}, _lock=asyncio.Lock()）                  │
+│                                                              │
+│  2. 应用运行期间                                               │
+│     ↓                                                        │
+│     用户请求 → create_or_reject() → 注册 RunRecord            │
+│            → set_status() → 更新状态                          │
+│            → cancel() → 取消 run                              │
+│            → get()/list_by_thread() → 查询                   │
+│                                                              │
+│  3. 单个 Run 结束                                              │
+│     ↓                                                        │
+│     worker.py:finally → publish_end() → bridge.cleanup()      │
+│     ⚠️ RunManager.cleanup() 未被调用                          │
+│     → RunRecord 残留在 _runs 字典中                            │
+│                                                              │
+│  4. 应用关闭                                                  │
+│     ↓                                                        │
+│     FastAPI shutdown → Python 进程退出                        │
+│     → RunManager 对象被 GC 回收                                │
+│     → _runs 字典中的所有 RunRecord 丢失                        │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+
+2.Agent上下文管理完整实现：
+路由层 (thread_runs.py)
+    ↓ 调用 start_run()
+服务层 (services.py)
+    ↓ 调用 run_agent()
+Worker 层 (worker.py)
+    ↓ 调用 agent_factory()
+Agent 工厂 (agent.py:make_lead_agent)
+    ↓ 注入
+┌─────────────────────────────────────┐
+│  Middleware 链（上下文管理在这里）     │
+├─────────────────────────────────────┤
+│ 1. MemoryMiddleware                  │ ← Memory 管理
+│ 2. TitleMiddleware                   │ ← 标题生成
+│ 3. SummarizationMiddleware           │ ← 上下文压缩
+│ 4. TodoMiddleware                    │ ← 任务列表
+│ 5. TokenUsageMiddleware              │ ← Token 统计
+│ 6. ViewImageMiddleware               │ ← 图片处理
+│ 7. LoopDetectionMiddleware           │ ← 循环检测
+│ 8. ClarificationMiddleware           │ ← 澄清询问
+└─────────────────────────────────────┘
+    ↓ 传递给
+LangGraph create_agent()
+    ↓ 包含
+System Prompt（Prompt 管理在这里）
